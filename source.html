@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Inventario by Indigo PR</title>
+    <script src="ds:/Sys/app.js"></script>
+    <link rel="stylesheet" href="themes/indigopr.min.css" />
+	<link rel="stylesheet" href="themes/jquery.mobile.icons.min.css" />
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile.structure-1.4.5.min.css" />
+	<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <style>
+        /* Ensure the page takes full height */
+        .ui-page {
+            min-height: 100vh; /* Full viewport height */
+        }
+        .content {
+            padding-bottom: 50px; /* Space for the footer */
+        }
+    </style>
+    <script>
+	function OnStart(){
+		document.getElementById('appURL').value = document.location;
+		document.addEventListener('keypress', keypressHandler);
+    	document.getElementById('pressed_keys').focus();
+	}
+	
+	 function keypressHandler(e) {
+       const keypressoutput = document.getElementById('pressed_keys');
+       app.SaveText( "NumProd",keypressoutput.value, "NumProd.txt" );
+       if (e.keyCode == 13) {
+       		app.SaveText( "NumProd",keypressoutput.value, "NumProd.txt" );
+       		app.Execute( "SearchProduct();" );
+           keypressoutput.value = "";
+           keypressoutput.focus()
+       } else {
+           keypressoutput.innerHTML += e.key;
+           app.SaveText( "NumProd",keypressoutput.value, "NumProd.txt" );
+       }
+   }
+   
+   function btnSearch(){
+   app.SaveText( "NumProd",document.getElementById('pressed_keys').value, "NumProd.txt" );
+   app.Execute( "SearchProduct();" );
+          document.getElementById('pressed_keys').value = "";
+           document.getElementById('pressed_keys').focus()
+   }
+	</script>
+</head>
+<body onLoad="app.Start();">
+
+<div data-role="page" id="menuPage" data-theme="c">
+    <div data-role="header">
+        <h1>Inventario - Menu</h1>
+    </div>
+
+    <div data-role="content" class="content">
+    <br />
+    <form>
+    <center><img src="img/inventory.png" align="absmiddle" vspace="2" hspace="2">
+    </center>
+      <ul data-role="listview" data-inset="true">
+            <li><a href="#comenzarPage">Comenzar</a></li>
+            <li><a href="#configuracionPage">Configuracion</a></li>
+            <li><a href="#" onClick="app.Exit(true);">Salir</a></li>
+      </ul>
+    </form>
+    <br />
+    </div>
+
+    <div data-role="footer" data-position="fixed" data-fullscreen="true"  data-theme="c">
+        <h4>Copyright &copy; 2025</h4>
+    </div>
+</div>
+
+
+<div data-role="page" id="configuracionPage"  data-theme="c">
+    <div data-role="header">
+        <h1>Configuracion</h1>
+    </div>
+    <div data-role="content">
+    <br><br>
+       <table width="100%" border="0" cellspacing="0" cellpadding="0">
+       <tr>
+    <td align="center" valign="middle" colspan="2">App URL: &nbsp;<input type="text" value="" id="appURL" name="appURL"></td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle"><img src="img/a.png" width="80"><input name="theme" type="radio" value="a" onClick="if(this.checked) app.Execute('ChangeTheme(\'a\');');"></td>
+    <td align="center" valign="middle"><img src="img/b.png" width="80"><input name="theme" type="radio" value="b" onClick="if(this.checked) app.Execute('ChangeTheme(\'b\');');"></td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle"><img src="img/c.png" width="80"><input name="theme" type="radio" value="c" onClick="if(this.checked) app.Execute('ChangeTheme(\'c\');');"></td>
+    <td align="center" valign="middle"><img src="img/d.png" width="80"><input name="theme" type="radio" value="d" onClick="if(this.checked) app.Execute('ChangeTheme(\'d\');');"></td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle"><img src="img/e.png" width="80"><input name="theme" type="radio" value="e" onClick="if(this.checked) app.Execute('ChangeTheme(\'e\');');"></td>
+    <td align="center" valign="middle"><img src="img/f.png" width="80"><input name="theme" type="radio" value="f" onClick="if(this.checked) app.Execute('ChangeTheme(\'f\');');"></td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle"><img src="img/g.png" width="80"><input name="theme" type="radio" value="g" onClick="if(this.checked) app.Execute('ChangeTheme(\'g\');');"></td>
+    <td align="center" valign="middle"><img src="img/h.png" width="80"><input name="theme" type="radio" value="h" onClick="if(this.checked) app.Execute('ChangeTheme(\'h\');');"></td>
+  </tr>
+</table>
+<br><br>
+    </div>
+    <div data-role="footer" data-position="fixed" data-fullscreen="true"  data-theme="c">
+        <h4>Copyright &copy; 2025</h4>
+    </div>
+</div>
+
+<div data-role="page" id="comenzarPage"  data-theme="c">
+    <div data-role="header">
+        <h1>Inventario</h1>
+    </div>
+    <div data-role="content">
+<center>
+	<span><input id="pressed_keys" name="pressed_keys" type="number" value="" /><button value="Search" onClick="btnSearch();">Search</button></span>
+	</center>
+    </div>
+    <div data-role="footer" data-position="fixed" data-fullscreen="true"  data-theme="c">
+        <h4>Copyright &copy; 2025</h4>
+    </div>
+</div>
+    
+<script>
+$(document).on("change", "#my-flipswitch", function() {
+    var state = $(this).val();
+    alert("Flipswitch is now: " + state);
+});
+
+</script>
+</body>
+</html>
