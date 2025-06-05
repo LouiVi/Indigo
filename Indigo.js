@@ -1,7 +1,5 @@
 function OnStart()
 {
-
-
 	lay = app.CreateLayout( "Linear", "VCenter,FillXY" )
 	web= app.CreateWebView( 1, 1 );
 	lay.AddChild( web );

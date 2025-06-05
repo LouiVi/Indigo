@@ -29,7 +29,7 @@
        app.SaveText( "NumProd",keypressoutput.value, "NumProd.txt" );
        if (e.keyCode == 13) {
        		app.SaveText( "NumProd",keypressoutput.value, "NumProd.txt" );
-       		app.Execute( "SearchProduct();" );
+       		//app.Execute( "SearchProduct();" );
            keypressoutput.value = "";
            keypressoutput.focus()
        } else {
@@ -40,15 +40,28 @@
    
    function btnSearch(){
    app.SaveText( "NumProd",document.getElementById('pressed_keys').value, "NumProd.txt" );
-   app.Execute( "SearchProduct();" );
-          document.getElementById('pressed_keys').value = "";
+   //app.Execute( "SearchProduct();" );
+          //document.getElementById('pressed_keys').value = "";
            document.getElementById('pressed_keys').focus()
    }
 	</script>
 </head>
 <body onLoad="app.Start();">
+<div data-role="page" id="loginPage" data-theme="g"> <div data-role="header"> <h1>Login</h1> </div>         <div data-role="content">
+            <form id="loginForm">
+                <label for="username">Username:</label>
+                <input type="text" name="username" id="username" required>
+                <label for="password">Password:</label>
+                <input type="password" name="password" id="password" required>
+                <input type="hidden" id="USERID" name="USERID" value="">
+                <input type="submit" value="Login">
+            </form>
+            <div id="responseMessage"></div>
+        </div>      <div data-role="footer" data-position="fixed" data-fullscreen="true"  data-theme="g">
+        <h4>Copyright &copy; 2025</h4>
+    </div></div>
 
-<div data-role="page" id="menuPage" data-theme="c">
+<div data-role="page" id="menuPage" data-theme="g">
     <div data-role="header">
         <h1>Inventario - Menu</h1>
     </div>
@@ -67,13 +80,13 @@
     <br />
     </div>
 
-    <div data-role="footer" data-position="fixed" data-fullscreen="true"  data-theme="c">
+    <div data-role="footer" data-position="fixed" data-fullscreen="true"  data-theme="g">
         <h4>Copyright &copy; 2025</h4>
     </div>
 </div>
 
 
-<div data-role="page" id="configuracionPage"  data-theme="c">
+<div data-role="page" id="configuracionPage"  data-theme="g">
     <div data-role="header">
         <h1>Configuracion</h1>
     </div>
@@ -102,31 +115,148 @@
 </table>
 <br><br>
     </div>
-    <div data-role="footer" data-position="fixed" data-fullscreen="true"  data-theme="c">
+    <div data-role="footer" data-position="fixed" data-fullscreen="true"  data-theme="g">
         <h4>Copyright &copy; 2025</h4>
     </div>
 </div>
 
-<div data-role="page" id="comenzarPage"  data-theme="c">
+<div data-role="page" id="comenzarPage"  data-theme="g">
     <div data-role="header">
         <h1>Inventario</h1>
     </div>
     <div data-role="content">
 <center>
-	<span><input id="pressed_keys" name="pressed_keys" type="number" value="" /><button value="Search" onClick="btnSearch();">Search</button></span>
+	<span><input id="pressed_keys" name="pressed_keys" type="number" value="" /><button value="Search" onClick="btnSearch(); ajaxGetData('getData.php?NUM_PRODUCTO=', 'NUM_PROD2');">Search</button></span>
 	</center>
+    <div id="tbl1">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><select name="NUM_PROD2" id="NUM_PROD2" onChange="document.getElementById('pressed_keys').value=this.value;ajaxGetData('getData.php?NUM_PRODUCTO=', 'NUM_PROD2');">
+    </select></td>
+  </tr>
+  <tr>
+    <td><input type="text" name="DESCRIPTION" id="DESCRIPTION" disabled value=""></td>
+  </tr>
+  <tr>
+    <td></td>
+  </tr>
+  <tr>
+    <td><label for="COSTO">COSTO</label>
+      <input type="text" name="COSTO" id="COSTO" disabled value=""></td>
+  </tr>
+  <tr>
+    <td><label for="PRECIO">PRECIO</label>
+      <input type="text" name="PRECIO" id="PRECIO" disabled value=""></td>
+  </tr>
+  <tr>
+    <td><span><label for="DISPONIBLE">DISPONIBLE</label>
+      <input type="text" name="DISPONIBLE" id="DISPONIBLE" disabled value=""><input type="hidden" name="DISPONIBLEORIGINAL" id="DISPONIBLEORIGINAL" value=""><button value="btnAdd" onClick="updateQty();">+</button></span></td>
+  </tr>
+  <tr>
+    <td><label for="SUPLIDOR">SUPLIDOR</label>
+      <input type="text" name="SUPLIDOR" id="SUPLIDOR" disabled value=""></td>
+  </tr>
+  <tr>
+    <td><label for="DEPTO">DEPTO</label>
+      <input type="text" name="DEPTO" id="DEPTO" disabled value=""></td>
+  </tr>
+  <tr>
+    <td><label for="SUBDEPTO">SUB-DEPTO</label>
+      <input type="text" name="SUB-DEPTO" id="SUB-DEPTO" disabled value=""></td>
+  </tr>
+</table>
+<br /><br /><br /><br /><br />
+	</div>
     </div>
-    <div data-role="footer" data-position="fixed" data-fullscreen="true"  data-theme="c">
+    <div data-role="footer" data-position="fixed" data-fullscreen="true"  data-theme="g">
         <h4>Copyright &copy; 2025</h4>
     </div>
 </div>
     
 <script>
-$(document).on("change", "#my-flipswitch", function() {
-    var state = $(this).val();
-    alert("Flipswitch is now: " + state);
-});
 
+function updateQty(){
+
+	document.getElementById('DISPONIBLEORIGINAL').value = document.getElementById('DISPONIBLE').value;
+	var r = prompt('Entre la cantidad del ajuste:', '0');
+	if(r === null) {
+	updateQty();
+	}else{
+	document.getElementById('DISPONIBLE').value = parseInt(document.getElementById('DISPONIBLE').value) + parseInt(r);
+	ajaxUpdateQty();
+	}
+}
+
+function ajaxGetData(url, elementId){
+	document.getElementById(elementId).innerHTML = "<img src='ajax-loader.gif' border='0'>";
+	if (window.XMLHttpRequest){
+		xmlhttp=new XMLHttpRequest();
+	}else{
+		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	xmlhttp.open("GET",url+document.getElementById('pressed_keys').value,false);
+	xmlhttp.send(null);
+	document.getElementById(elementId).innerHTML = "<img src='ajax-loader.gif' border='0'>";
+	//document.getElementById('NUM_PROD2').innerHTML = "";
+	document.getElementById('NUM_PROD2').innerHTML = xmlhttp.responseText.split("||")[0];
+	document.getElementById('DESCRIPTION').value = xmlhttp.responseText.split("||")[1];
+	document.getElementById('COSTO').value = xmlhttp.responseText.split("||")[2];
+	document.getElementById('PRECIO').value = xmlhttp.responseText.split("||")[3];
+	document.getElementById('DISPONIBLE').value = xmlhttp.responseText.split("||")[4];
+	document.getElementById('SUPLIDOR').value = xmlhttp.responseText.split("||")[5];
+	document.getElementById('DEPTO').value = xmlhttp.responseText.split("||")[6];
+	document.getElementById('SUB-DEPTO').value = xmlhttp.responseText.split("||")[7];
+	document.getElementById('pressed_keys').value = "";
+}
+
+function ajaxUpdateQty(){
+
+	a = document.getElementById('USERID').value;
+	b = document.getElementById('DISPONIBLE').value;
+	c = document.getElementById('DISPONIBLEORIGINAL').value;
+	d = new Date().toString();
+	e = document.getElementById('NUM_PROD2').value;
+	/*alert(a);
+	alert(b);
+	alert(c);
+	alert(d);
+	alert(e);
+	*/
+	url = "logTransaction.php?userid="+a+"&cantidadnueva="+b+"&cantidadoriginal="+c+"&hora="+d+"&prod="+e;
+	if (window.XMLHttpRequest){
+		xmlhttp=new XMLHttpRequest();
+	}else{
+		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	xmlhttp.open("GET",url,false);
+	xmlhttp.send(null);
+	app.ShowPopup(xmlhttp.responseText);
+}
 </script>
+
+<script>
+        $(document).ready(function() {
+            $('#loginForm').on('submit', function(event) {
+                event.preventDefault(); // Prevent the default form submission
+                $.ajax({
+                    url: 'login.php',
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        //$('#responseMessage').html(response);
+                        if (response.includes("success")) {
+						//alert(response);
+							document.getElementById('USERID').value = response.split("||")[0]; 
+                            // Redirect or load another page/div
+                            // Example: 
+							window.location.href = "#menuPage";
+                        } else {
+							app.Exit(true);
+						}
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
